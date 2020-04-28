@@ -14,6 +14,10 @@ public class Word {
     @ColumnInfo(name = "chinese_meaning")
     private String chineseMeaning;
 
+    public Word() {
+        // 空参构造函数，只在删除时调用。
+    }
+
     public Word(String word, String chineseMeaning) {
         this.word = word;
         this.chineseMeaning = chineseMeaning;

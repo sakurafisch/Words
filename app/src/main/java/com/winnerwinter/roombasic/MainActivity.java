@@ -57,6 +57,15 @@ public class MainActivity extends AppCompatActivity {
                 updateView();
             }
         });
+        buttonDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Word word = new Word();
+                word.setId(80);
+                wordDao.deleteWords(word);
+                updateView();
+            }
+        });
 
     }
 
