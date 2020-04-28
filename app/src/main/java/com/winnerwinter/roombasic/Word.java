@@ -15,6 +15,8 @@ public class Word {
     private String chineseMeaning;
 
     public Word() {
+        this.word = null;
+        this.chineseMeaning = null;
         // 空参构造函数，只在删除时调用。
     }
 
