@@ -48,6 +48,15 @@ public class MainActivity extends AppCompatActivity {
                 updateView();
             }
         });
+        buttonUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Word word = new Word("Hi", "你好啊");
+                word.setId(70);
+                wordDao.updateWords(word);
+                updateView();
+            }
+        });
 
     }
 
