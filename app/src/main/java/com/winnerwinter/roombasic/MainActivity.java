@@ -1,6 +1,8 @@
 package com.winnerwinter.roombasic;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.room.Room;
 
 import android.os.Bundle;
@@ -15,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
     WordDao wordDao;
     TextView textView;
     Button buttonInsert, buttonUpdate, buttonClear, buttonDelete;
+    LiveData<List<Word>> allWordsLive;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +28,19 @@ public class MainActivity extends AppCompatActivity {
                 .allowMainThreadQueries()
                 .build();
         wordDao = wordDatabase.getWordDao();
-        updateView();
+        allWordsLive = wordDao.getAllWordsLive();
+        allWordsLive.observe(this, new Observer<List<Word>>() {
+            @Override
+            public void onChanged(List<Word> words) {
+                StringBuilder text = new StringBuilder();
+                for (int i = 0; i < words.size(); ++i) {
+                    Word word = words.get(i);
+                    text.append(word.getId()).append(":").append(word.getWord()).append("=").append(word.getChineseMeaning()).append("\n");
+
+                }
+                textView.setText(text.toString());
+            }
+        });
 
         buttonInsert = findViewById(R.id.buttonInsert);
         buttonClear = findViewById(R.id.buttonClear);
@@ -38,14 +53,12 @@ public class MainActivity extends AppCompatActivity {
                 Word word1 = new Word("Hello", "你好");
                 Word word2 = new Word("World", "世界");
                 wordDao.insertWords(word1, word2);
-                updateView();
             }
         });
         buttonClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 wordDao.deleteAllWords();
-                updateView();
             }
         });
         buttonUpdate.setOnClickListener(new View.OnClickListener() {
@@ -54,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
                 Word word = new Word("Hi", "你好啊");
                 word.setId(70);
                 wordDao.updateWords(word);
-                updateView();
             }
         });
         buttonDelete.setOnClickListener(new View.OnClickListener() {
@@ -63,20 +75,7 @@ public class MainActivity extends AppCompatActivity {
                 Word word = new Word();
                 word.setId(80);
                 wordDao.deleteWords(word);
-                updateView();
             }
         });
-
-    }
-
-    void updateView() {
-        List<Word> list = wordDao.getAllWords();
-        String text = "";
-        for (int i = 0; i < list.size(); ++i) {
-            Word word = list.get(i);
-            text += word.getId() + ":" + word.getWord() + "=" + word.getChineseMeaning() + "\n";
-
-        }
-        textView.setText(text);
     }
 }
