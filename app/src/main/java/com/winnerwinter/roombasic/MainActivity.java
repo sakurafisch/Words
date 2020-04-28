@@ -21,19 +21,30 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         textView = findViewById(R.id.textView);
-        wordDatabase = Room.databaseBuilder(this, WordDatabase.class, "World database")
+        wordDatabase = Room.databaseBuilder(this, WordDatabase.class, "Word database")
                 .allowMainThreadQueries()
                 .build();
         wordDao = wordDatabase.getWordDao();
         updateView();
 
         buttonInsert = findViewById(R.id.buttonInsert);
+        buttonClear = findViewById(R.id.buttonClear);
+        buttonUpdate = findViewById(R.id.buttonUpdate);
+        buttonDelete = findViewById(R.id.buttonDelete);
+
         buttonInsert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Word word1 = new Word("Hello", "你好");
                 Word word2 = new Word("World", "世界");
                 wordDao.insertWords(word1, word2);
+                updateView();
+            }
+        });
+        buttonClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                wordDao.deleteAllWords();
                 updateView();
             }
         });
