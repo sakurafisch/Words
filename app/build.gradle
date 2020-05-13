@@ -53,6 +53,7 @@ dependencies {
     //noinspection LifecycleAnnotationProcessorWithJava8
     annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
     // alternately - if using Java8, use the following instead of lifecycle-compiler
     // implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
