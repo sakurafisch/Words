@@ -1,4 +1,4 @@
-package com.winnerwinter.roombasic;
+package com.winnerwinter.words;
 
 import org.junit.Test;
 

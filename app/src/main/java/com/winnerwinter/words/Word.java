@@ -1,7 +1,8 @@
-package com.winnerwinter.roombasic;
+package com.winnerwinter.words;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity
@@ -18,6 +19,7 @@ public class Word {
     private boolean chineseInvisible;
 
 
+    @Ignore
     public Word() {
         this.word = null;
         this.chineseMeaning = null;
