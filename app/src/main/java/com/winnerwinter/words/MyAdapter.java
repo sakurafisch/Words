@@ -40,17 +40,50 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         } else {
             itemView = layoutInflater.inflate(R.layout.cell_normal_2, parent, false);
         }
-        return new MyViewHolder(itemView);
+        final MyViewHolder holder = new MyViewHolder(itemView);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Uri uri = Uri.parse("https://www.youdao.com/w/eng/" + holder.textViewEnglish.getText() + "/#keyfrom=dict2.index");
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(uri);
+                holder.itemView.getContext().startActivity(intent);
+            }
+        });
+
+        holder.aSwitchChineseInvisible.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                holder.aSwitchChineseInvisible.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        Word word = (Word) holder.itemView.getTag(R.id.word_for_view_holder);
+                        if (isChecked) {
+                            holder.textViewChinese.setVisibility(View.GONE);
+                            word.setChineseInvisible(true);
+                            wordViewModel.updateWords(word);
+                        } else {
+                            holder.textViewChinese.setVisibility(View.VISIBLE);
+                            word.setChineseInvisible(false);
+                            wordViewModel.updateWords(word);
+                        }
+                    }
+                });
+            }
+        });
+        return holder;
         /*return null;*/
     }
 
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
         final Word word = allWords.get(position);
+        holder.itemView.setTag(R.id.word_for_view_holder, word);
         holder.textViewNumber.setText(String.valueOf(position + 1));
         holder.textViewEnglish.setText(word.getWord());
         holder.textViewChinese.setText(word.getChineseMeaning());
-        holder.aSwitchChineseInvisible.setOnCheckedChangeListener(null);
         if (word.isChineseInvisible()) {
             holder.textViewChinese.setVisibility(View.GONE);
             holder.aSwitchChineseInvisible.setChecked(true);
@@ -58,29 +91,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             holder.textViewChinese.setVisibility(View.VISIBLE);
             holder.aSwitchChineseInvisible.setChecked(false);
         }
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Uri uri = Uri.parse("https://www.youdao.com/w/eng/" + holder.textViewEnglish.getText() + "/#keyfrom=dict2.index");
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(uri);
-                holder.itemView.getContext().startActivity(intent);
-            }
-        });
-        holder.aSwitchChineseInvisible.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    holder.textViewChinese.setVisibility(View.GONE);
-                    word.setChineseInvisible(true);
-                    wordViewModel.updateWords(word);
-                } else {
-                    holder.textViewChinese.setVisibility(View.VISIBLE);
-                    word.setChineseInvisible(false);
-                    wordViewModel.updateWords(word);
-                }
-            }
-        });
     }
 
     @Override
@@ -101,4 +111,5 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             aSwitchChineseInvisible = itemView.findViewById(R.id.switchChineseInvisible);
         }
     }
+
 }
