@@ -1,6 +1,9 @@
 package com.winnerwinter.words;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -20,6 +23,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -39,6 +43,8 @@ public class WordsFragment extends Fragment {
     private MyAdapter myAdapter1, myAdapter2;
     private FloatingActionButton floatingActionButton;
     private LiveData<List<Word>> filteredWords;
+    private static final String VIEW_TYPE_SHP = "view_type_shp";
+    private static final String IS_USING_CARD_VIEW = "is_using_card_view";
 
     public WordsFragment() {
         // Required empty public constructor
@@ -51,6 +57,44 @@ public class WordsFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_words, container, false);
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.clearData:
+                AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+                builder.setTitle("清空数据");
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        wordViewModel.deleteAllWords();
+                    }
+                });
+                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                });
+                builder.create();
+                builder.show();
+                break;
+            case R.id.switchViewType:
+                SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(VIEW_TYPE_SHP, Context.MODE_PRIVATE);
+                boolean viewType = sharedPreferences.getBoolean(IS_USING_CARD_VIEW, false);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                if (viewType) {
+                    recyclerView.setAdapter(myAdapter1);
+                    editor.putBoolean(IS_USING_CARD_VIEW, false);
+                } else {
+                    recyclerView.setAdapter(myAdapter2);
+                    editor.putBoolean(IS_USING_CARD_VIEW, true);
+                }
+                editor.apply();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -95,7 +139,14 @@ public class WordsFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         myAdapter1 = new MyAdapter(false, wordViewModel);
         myAdapter2 = new MyAdapter(true, wordViewModel);
-        recyclerView.setAdapter(myAdapter1);
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(VIEW_TYPE_SHP, Context.MODE_PRIVATE);
+        boolean viewType = sharedPreferences.getBoolean(IS_USING_CARD_VIEW, false);
+        if (viewType) {
+            recyclerView.setAdapter(myAdapter2);
+        } else {
+            recyclerView.setAdapter(myAdapter1);
+        }
+        // recyclerView.setAdapter(myAdapter1);
         filteredWords = wordViewModel.getAllWordsLive();
         filteredWords.observe(requireActivity(), new Observer<List<Word>>() {
             @Override
