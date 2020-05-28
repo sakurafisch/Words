@@ -17,6 +17,7 @@ import androidx.navigation.NavAction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -46,6 +47,7 @@ public class WordsFragment extends Fragment {
     private LiveData<List<Word>> filteredWords;
     private static final String VIEW_TYPE_SHP = "view_type_shp";
     private static final String IS_USING_CARD_VIEW = "is_using_card_view";
+    private List<Word> allWords;
 
     public WordsFragment() {
         // Required empty public constructor
@@ -119,6 +121,7 @@ public class WordsFragment extends Fragment {
                     @Override
                     public void onChanged(List<Word> words) {
                         int temp = myAdapter1.getItemCount();
+                        allWords = words;
                         if (temp != words.size()) {
                             myAdapter1.submitList(words);
                             myAdapter2.submitList(words);
@@ -168,6 +171,7 @@ public class WordsFragment extends Fragment {
             @Override
             public void onChanged(List<Word> words) {
                 int temp = myAdapter1.getItemCount();
+                allWords = words;
                 if (temp != words.size()) {
                     recyclerView.smoothScrollBy(0, -200);
                     myAdapter1.submitList(words);
@@ -175,6 +179,21 @@ public class WordsFragment extends Fragment {
                 }
             }
         });
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.START | ItemTouchHelper.END) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                Word worToDelete = allWords.get(viewHolder.getAdapterPosition());
+                wordViewModel.deleteWords(worToDelete);
+
+            }
+        }).attachToRecyclerView(recyclerView);
+
         floatingActionButton = requireActivity().findViewById(R.id.floatingActionButton);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
