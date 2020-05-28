@@ -14,15 +14,12 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class MyAdapter extends ListAdapter<Word, MyAdapter.MyViewHolder> {
 
     private boolean useCardView;
     private WordViewModel wordViewModel;
 
-    public MyAdapter(boolean useCardView, WordViewModel wordViewModel) {
+    MyAdapter(boolean useCardView, WordViewModel wordViewModel) {
         super(new DiffUtil.ItemCallback<Word>() {
             @Override
             public boolean areItemsTheSame(@NonNull Word oldItem, @NonNull Word newItem) {
@@ -112,7 +109,7 @@ public class MyAdapter extends ListAdapter<Word, MyAdapter.MyViewHolder> {
         TextView textViewEnglish;
         TextView textViewChinese;
         Switch aSwitchChineseInvisible;
-        public MyViewHolder(@NonNull View itemView) {
+        MyViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewNumber = itemView.findViewById(R.id.textViewNumber);
             textViewEnglish = itemView.findViewById(R.id.textViewEnglish);

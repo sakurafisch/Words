@@ -48,6 +48,7 @@ public class AddFragment extends Fragment {
         editTextEnglish = activity.findViewById(R.id.editTextEnglish);
         editTextEnglish.requestFocus();
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        assert imm != null;
         imm.showSoftInput(editTextEnglish, 0);
         editTextChinese = activity.findViewById(R.id.editTextChinese);
         buttonSubmit = activity.findViewById(R.id.buttonSubmit);
@@ -85,6 +86,7 @@ public class AddFragment extends Fragment {
                 NavController navController = Navigation.findNavController(view);
                 navController.navigateUp();
                 InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                assert imm != null;
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
         });

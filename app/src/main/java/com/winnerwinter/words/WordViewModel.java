@@ -9,7 +9,6 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 public class WordViewModel extends AndroidViewModel {
-    private WordDao wordDao;
     private WordRepository wordRepository;
     public WordViewModel(@NonNull Application application) {
         super(application);
@@ -17,7 +16,7 @@ public class WordViewModel extends AndroidViewModel {
     }
 
 
-    public LiveData<List<Word>> getAllWordsLive() {
+    LiveData<List<Word>> getAllWordsLive() {
         return wordRepository.getAllWordsLive();
     }
     LiveData<List<Word>> findWordsWithPattern(String pattern) { return wordRepository.findWordsWithPattern(pattern); }

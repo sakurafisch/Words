@@ -23,7 +23,7 @@ public abstract class WordDatabase extends RoomDatabase {
     }
     public abstract WordDao getWordDao();
 
-    static final Migration MIGRATION_4_5 = new Migration(4, 5) {
+    private static final Migration MIGRATION_4_5 = new Migration(4, 5) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE word ADD COLUMN chinese_invisible INTEGER NOT NULL DEFAULT 0");
