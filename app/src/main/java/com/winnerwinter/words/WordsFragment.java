@@ -17,6 +17,7 @@ import androidx.navigation.NavAction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +33,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
@@ -48,6 +50,8 @@ public class WordsFragment extends Fragment {
     private static final String VIEW_TYPE_SHP = "view_type_shp";
     private static final String IS_USING_CARD_VIEW = "is_using_card_view";
     private List<Word> allWords;
+    private Boolean undoAction = false;
+    private DividerItemDecoration dividerItemDecoration;
 
     public WordsFragment() {
         // Required empty public constructor
@@ -85,13 +89,15 @@ public class WordsFragment extends Fragment {
                 break;
             case R.id.switchViewType:
                 SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(VIEW_TYPE_SHP, Context.MODE_PRIVATE);
-                boolean viewType = sharedPreferences.getBoolean(IS_USING_CARD_VIEW, false);
+                boolean isUsingCardView = sharedPreferences.getBoolean(IS_USING_CARD_VIEW, false);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                if (viewType) {
+                if (isUsingCardView) {
                     recyclerView.setAdapter(myAdapter1);
+                    recyclerView.addItemDecoration(dividerItemDecoration);
                     editor.putBoolean(IS_USING_CARD_VIEW, false);
                 } else {
                     recyclerView.setAdapter(myAdapter2);
+                    recyclerView.removeItemDecoration(dividerItemDecoration);
                     editor.putBoolean(IS_USING_CARD_VIEW, true);
                 }
                 editor.apply();
@@ -160,10 +166,12 @@ public class WordsFragment extends Fragment {
         });
         SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(VIEW_TYPE_SHP, Context.MODE_PRIVATE);
         boolean viewType = sharedPreferences.getBoolean(IS_USING_CARD_VIEW, false);
+        dividerItemDecoration = new DividerItemDecoration(requireActivity(), DividerItemDecoration.VERTICAL);
         if (viewType) {
             recyclerView.setAdapter(myAdapter2);
         } else {
             recyclerView.setAdapter(myAdapter1);
+            recyclerView.addItemDecoration(dividerItemDecoration);
         }
         // recyclerView.setAdapter(myAdapter1);
         filteredWords = wordViewModel.getAllWordsLive();
@@ -173,7 +181,10 @@ public class WordsFragment extends Fragment {
                 int temp = myAdapter1.getItemCount();
                 allWords = words;
                 if (temp != words.size()) {
-                    recyclerView.smoothScrollBy(0, -200);
+                    if (temp < words.size() && !undoAction) {
+                        recyclerView.smoothScrollBy(0, -200);
+                    }
+                    undoAction = false;
                     myAdapter1.submitList(words);
                     myAdapter2.submitList(words);
                 }
@@ -188,9 +199,15 @@ public class WordsFragment extends Fragment {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                Word worToDelete = allWords.get(viewHolder.getAdapterPosition());
+                final Word worToDelete = allWords.get(viewHolder.getAdapterPosition());
                 wordViewModel.deleteWords(worToDelete);
-
+                Snackbar.make(requireActivity().findViewById(R.id.wordsFragmentView), "删除了一个词汇", Snackbar.LENGTH_SHORT).setAction("撤销", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        undoAction = true;
+                        wordViewModel.insertWords(worToDelete);
+                    }
+                }).show();
             }
         }).attachToRecyclerView(recyclerView);
 
