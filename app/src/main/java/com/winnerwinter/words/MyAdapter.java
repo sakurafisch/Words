@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
@@ -60,26 +59,19 @@ public class MyAdapter extends ListAdapter<Word, MyAdapter.MyViewHolder> {
         holder.aSwitchChineseInvisible.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                holder.aSwitchChineseInvisible.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        Word word = (Word) holder.itemView.getTag(R.id.word_for_view_holder);
-                        if (isChecked) {
-                            holder.textViewChinese.setVisibility(View.GONE);
-                            word.setChineseInvisible(true);
-                            wordViewModel.updateWords(word);
-                        } else {
-                            holder.textViewChinese.setVisibility(View.VISIBLE);
-                            word.setChineseInvisible(false);
-                            wordViewModel.updateWords(word);
-                        }
-                    }
-                });
+                Word word = (Word) holder.itemView.getTag(R.id.word_for_view_holder);
+                if (isChecked) {
+                    holder.textViewChinese.setVisibility(View.GONE);
+                    word.setChineseInvisible(true);
+                    wordViewModel.updateWords(word);
+                } else {
+                    holder.textViewChinese.setVisibility(View.VISIBLE);
+                    word.setChineseInvisible(false);
+                    wordViewModel.updateWords(word);
+                }
             }
         });
         return holder;
-        /*return null;*/
     }
 
     @Override
